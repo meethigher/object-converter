@@ -1,0 +1,111 @@
+@startuml
+
+'https://plantuml.com/class-diagram
+title 对象转换器(已完善2022-10-25)
+package "top.meethigher.converter.proxy 注解实现接口" {
+
+
+   interface InvocationHandler {
+   +invoke(Object proxy, Method method, Object[] args):Object
+   }
+
+    abstract ConverterInvocationHandler<T extends ObjectConverter<FROM,TO>> {
+    -clazz:Class<T> 需代理实现的接口
+    -fromClass:Class<?> 对应泛型FROM
+    -toClass:Class<?> 对应泛型TO
+    -mapMap:Map<String,Map<String,String>> clazz注解配置的映射关系，用于后续复用
+    #ConverterInvocationHandler(Class<T> clazz):构造函数
+    -{static}getMap(Method[] methods):Map<String,Map<String,String>> 获取映射关系
+    +invoke(Object proxy, Method method, Object[] args):Object
+    #process(Object proxy, Method method, Object origin, boolean reverse, Class<?> targetClass):Object 数据转换处理过程
+    }
+
+    class DefaultConverterInvocationHandler<T extends ObjectConverter> {
+    +DefaultConverterInvocationHandler(Class<T> clazz)
+    #process(Object proxy, Method method, Object origin, boolean reverse, Class<?> targetClass):Object 数据转换处理过程
+    }
+    class DotSupportConverterInvocationHandler<T extends ObjectConverter> {
+    +DotSupportConverterInvocationHandler(Class<T> clazz)
+    #process(Object proxy, Method method, Object origin, boolean reverse, Class<?> targetClass):Object 数据转换处理过程
+    }
+
+    class ConverterProvider {
+    +{static}defaultInstance(Class<T> clazz):T 默认实现
+    +{static}dotSupportInstance(Class<T> clazz):T 支持.语法的实现
+    }
+
+    InvocationHandler <|.. ConverterInvocationHandler:实现
+    ConverterInvocationHandler <|-- DefaultConverterInvocationHandler:继承
+    ConverterInvocationHandler <|-- DotSupportConverterInvocationHandler:继承
+    DefaultConverterInvocationHandler <.. ConverterProvider:依赖
+    DotSupportConverterInvocationHandler <.. ConverterProvider:依赖
+
+
+
+
+}
+
+
+
+package "top.meethigher.converter 转换器" {
+
+    interface ObjectConverter<FROM,TO> {
+    +convert(From t):TO
+    +reverse(To t):FROM
+    }
+
+    interface DefaultUserInfoConverter<CasUserInfo,LocalUserInfo> {
+    +convert(CasUserInfo info):LocalUserInfo
+    +reverse(LocalUserInfo t):CasUserInfo
+    }
+    note right
+    默认接入CasClient的用户信息转换
+    采用注解实现
+    end note
+
+    class OtherUserInfoConverter<String,LocalUserInfo> {
+    +convert(String info):LocalUserInfo
+    +reverse(LocalUserInfo t):String
+    }
+    note left
+    亦可直接子类实现
+    end note
+
+
+    ObjectConverter <|-- DefaultUserInfoConverter:继承
+    ObjectConverter <|.. OtherUserInfoConverter:实现
+
+}
+
+
+
+package "top.meethigher.converter.annotation 转换注解" {
+    annotation  ConverterResults <<METHOD>> {
+    String id
+    ConverterResult[] value
+    }
+
+    annotation ConverterResult <<METHOD>> {
+    String from
+    String to
+    }
+
+    annotation ConverterResultsMap <<METHOD>> {
+    String[] value
+    }
+    note right
+    参考mybatis方法注解
+    end note
+
+
+    ConverterResults *-- ConverterResult:组合(强关联，生命周期相同)
+    ConverterResultsMap o-- ConverterResults:聚合(弱关联)
+
+    ConverterResults <.. DefaultUserInfoConverter #text:blue;line:blue; :依赖
+    ConverterResultsMap <.. DefaultUserInfoConverter #text:blue;line:blue;
+    ConverterResults <.. ConverterInvocationHandler #text:red;line:red; :依赖
+    ConverterResultsMap <.. ConverterInvocationHandler #text:red;line:red;
+
+}
+
+@enduml

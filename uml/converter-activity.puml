@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+title 对象转换器(已完善2022-10-25)
+note
+该活动图内会逐步完善以下细节（目前想到的坑就下面这些，肯定还有其他未想到的坑）
+1. 对象层级时的转换处理(比如person.superPerson.skill<=>jiNeng) √
+2. 继承对象的转换处理(忽略访问权限，递归获取所有字段) √
+3. 类型不匹配，转换会忽略 √
+4. 注解默认值的处理(自动匹配相同字段、相同类型) √
+5. 单一注解的使用及多注解联合复用使用 √
+6. 单一无层级对象处理 √
+end note
+start
+:定义泛型顶级接口<FROM,TO>;
+
+if (是否手写实现?) is (yes) then
+  :创建子类，实现顶级接口;
+  note right
+  自由实现，灵活性较高，通用性受限
+  end note
+else (no)
+:创建子接口，继承顶级接口，并添加注解(字段转换映射);
+note left
+注解实现接口，通用性较强，灵活性受限
+需要遵守注解规范
+end note
+partition "实现接口：采用PROXY基于注解实现方法" {
+:获取定义的FROM、TO类型;
+:获取注解ConverterResults或ConverterResultsMap;
+note left
+两个注解若都不存在，异常丢出去，转换失败
+两注解可以配合使用，也可以单独使用
+end note
+#red:通过 两个注解结合 或 单一注解，建立字段映射关系;
+if (正向转换(FROM->TO)?) is (yes) then
+  :实现正向转换convert方法;
+  :通过目标类型TO的无参构造函数，获取对象实例;
+  #red:根据映射关系反射拿取FROM字段值，赋给TO;
+else (no)
+  :实现逆向转换reverse方法;
+  :通过目标类型FROM的无参构造函数，获取对象实例;
+   #red:根据映射关系反射拿取TO字段值，赋给FROM;
+
+endif
+:返回目标对象实例;
+note left
+如果没有无参构造函数，丢异常，转换失败
+end note
+
+
+}
+endif
+
+
+:获得实现实例;
+stop
+
+@enduml
