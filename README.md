@@ -17,7 +17,7 @@ mvn clean source:jar install
 <dependency>
     <groupId>top.meethigher</groupId>
     <artifactId>object-converter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
