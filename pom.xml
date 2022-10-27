@@ -6,7 +6,7 @@
 
     <groupId>top.meethigher</groupId>
     <artifactId>object-converter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <name>object-converter</name>
     <description>object converter(deep copy) based on annovation</description>
     <url>https://github.com/meethigher/object-converter</url>

@@ -12,10 +12,11 @@ import java.util.Map;
 
 /**
  * Proxy代理对象生成器
+ * <pre>
  * 目前提供两种方式
  * {@link DefaultConverterInvocationHandler} 匹配注解里配置的映射关系，支持同类型同字段自动转换、支持多继承
  * {@link DotSupportConverterInvocationHandler} 仅匹配注解里配置的映射关系，支持多继承、支持层级转换(比如person.name&lt;=&gt;mingCheng)
- *
+ * </pre>
  * @author chenchuancheng
  * @since 2022/10/25 10:54
  */

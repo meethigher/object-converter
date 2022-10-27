@@ -11,7 +11,7 @@ mvn clean install
 mvn clean source:jar install
 ```
 
-或者直接使用即可，已发布到Maven中央仓库。
+或者直接使用即可，已发布到Maven中央仓库，仅14KB。
 
 ```xml
 <dependency>

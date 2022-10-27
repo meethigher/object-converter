@@ -1,7 +1,6 @@
 package top.meethigher.converter.proxy;
 
 
-
 import top.meethigher.converter.ObjectConverter;
 
 import java.lang.reflect.Constructor;
@@ -12,12 +11,13 @@ import java.util.Map;
 
 /**
  * Proxy代理对象生成器
+ * <pre>
  * 目前提供两种方式
  * {@link DefaultConverterInvocationHandler} 匹配注解里配置的映射关系，支持同类型同字段自动转换、支持多继承
  * {@link DotSupportConverterInvocationHandler} 仅匹配注解里配置的映射关系，支持多继承、支持层级转换(比如person.name&lt;=&gt;mingCheng)
- * <p>
  * 基于.语法的Proxy代理对象生成器
  * 思路借鉴了Aviator，本来整个这块一开始尝试用[Aviator](https://github.com/killme2008/aviatorscript)来实现，但是Aviator只支持读取，而写入支持类型只是数值型，所以还要手动实现
+ * </pre>
  *
  * @author chenchuancheng
  * @since 2022/10/25 11:17
